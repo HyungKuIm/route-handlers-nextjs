@@ -31,9 +31,26 @@ export default function DogsPage() {
     fetchDogs();
   }, []);
 
+  async function handleDelete(dog: Dog) {
+    if (!confirm(`'${dog.kind}'을(를) 삭제할까요?`)) return;
+
+    try {
+      const res = await fetch(`/dogs/api/${dog.id}`, { method: "DELETE" });
+
+      if (!res.ok) {
+        const data = await res.json();
+        alert(data.message ?? "삭제에 실패했습니다");
+        return;
+      }
+
+      setDogs((prev) => prev.filter((d) => d.id !== dog.id));
+    } catch {
+      alert("삭제에 실패했습니다");
+    }
+  }
+
   if (loading) return <p className="p-8">불러오는 중...</p>;
   if (error) return <p className="p-8 text-red-500">{error}</p>;
-  if (dogs.length === 0) return <p className="p-8">등록된 dog가 없습니다.</p>;
 
   return (
     <div className="p-8">
@@ -46,13 +63,14 @@ export default function DogsPage() {
           등록
         </Link>
       </div>
+      {dogs.length === 0 && <p>등록된 dog가 없습니다.</p>}
       <ul className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
         {dogs.map((dog) => (
-          <li key={dog.id}>
-            <Link
-              href={`/dogs/${dog.id}/edit`}
-              className="block border border-gray-300 rounded-lg overflow-hidden hover:shadow-lg transition-shadow"
-            >
+          <li
+            key={dog.id}
+            className="border border-gray-300 rounded-lg overflow-hidden hover:shadow-lg transition-shadow"
+          >
+            <Link href={`/dogs/${dog.id}/edit`} className="block">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={imageSrc(dog.image)}
@@ -73,6 +91,15 @@ export default function DogsPage() {
                 <p className="text-xs text-gray-400">조회수 {dog.readcount}</p>
               </div>
             </Link>
+            <div className="px-4 pb-4 text-right">
+              <button
+                type="button"
+                onClick={() => handleDelete(dog)}
+                className="px-3 py-1 rounded border border-red-500 text-red-500 hover:bg-red-50"
+              >
+                삭제
+              </button>
+            </div>
           </li>
         ))}
       </ul>

@@ -42,3 +42,24 @@ export async function PUT(
         return Response.json({ message: 'Spring 서버에 연결할 수 없습니다 '}, { status: 502 });
     }
 }
+
+export async function DELETE(
+    request: NextRequest,
+    { params }: { params: Promise<{ id: string }> }
+) {
+    const { id } = await params;
+
+    try {
+        const res = await fetch(`${API_BASE}/dogs/${id}`, { method: 'DELETE' });
+
+        if (!res.ok) {
+            const text = await res.text();
+            return Response.json({ message: text }, { status: res.status });
+        }
+
+        // Spring은 보통 204 No Content를 반환하므로 본문 없이 전달
+        return new Response(null, { status: 204 });
+    } catch {
+        return Response.json({ message: 'Spring 서버에 연결할 수 없습니다 '}, { status: 502 });
+    }
+}
