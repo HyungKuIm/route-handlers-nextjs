@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 
 type Dog = {
   id: number;
@@ -53,7 +54,12 @@ export default function DogsPage() {
 
   return (
     <div className="p-8">
-      <h1 className="text-2xl font-bold mb-6">Dogs</h1>
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-2xl font-bold">Dogs</h1>
+        <Link href="/dogs/new" className="px-4 py-2 rounded bg-blue-600 text-white">
+          등록
+        </Link>
+      </div>
       <ul className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
         {dogs.map((dog) => (
           <li key={dog.id} className="border border-gray-300 rounded-lg overflow-hidden">
