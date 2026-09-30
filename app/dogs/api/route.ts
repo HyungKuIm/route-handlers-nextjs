@@ -1,6 +1,5 @@
 import { type NextRequest } from "next/server";
-
-const API_BASE = process.env.SPRING_API_URL; 
+import { API_BASE, toDogRequest, uploadImage } from "./spring";
 
 export async function GET(request: NextRequest) {
     
@@ -26,19 +25,10 @@ export async function POST(request: NextRequest) {
         // 1) POST /dogs (JSON)  2) POST /dogs/{id}/image (multipart, key: file)
         const formData = await request.formData();
 
-        const dogRequest = {
-            kind: formData.get('kind'),
-            country: formData.get('country'),
-            content: formData.get('content'),
-            height: Number(formData.get('height')),
-            weight: Number(formData.get('weight')),
-            price: Number(formData.get('price')),
-        };
-
         const createRes = await fetch(`${API_BASE}/dogs`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(dogRequest),
+            body: JSON.stringify(toDogRequest(formData)),
         });
 
         if (!createRes.ok) {
@@ -48,19 +38,10 @@ export async function POST(request: NextRequest) {
 
         const dog = await createRes.json();
 
-        // 파일을 선택하지 않으면 빈 File(size 0)이 오므로 건너뜀
-        const file = formData.get('file');
-        if (!(file instanceof File) || file.size === 0) {
+        const uploadRes = await uploadImage(dog.id, formData);
+        if (!uploadRes) {
             return Response.json(dog, { status: 201 });
         }
-
-        const imageForm = new FormData();
-        imageForm.append('file', file);
-
-        const uploadRes = await fetch(`${API_BASE}/dogs/${dog.id}/image`, {
-            method: 'POST',
-            body: imageForm,
-        });
 
         if (!uploadRes.ok) {
             const text = await uploadRes.text();

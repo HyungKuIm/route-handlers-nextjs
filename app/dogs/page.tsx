@@ -2,24 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-
-type Dog = {
-  id: number;
-  kind: string;
-  country: string;
-  content: string;
-  height: number;
-  weight: number;
-  price: number;
-  readcount: number;
-  image: string;
-};
-
-// "h.jpg"처럼 경로 없이 파일명만 온 경우도 /images/ 아래로 맞춤
-function imageSrc(image: string) {
-  if (image.startsWith("http") || image.startsWith("/")) return image;
-  return `/images/${image}`;
-}
+import { type Dog, imageSrc } from "./types";
 
 export default function DogsPage() {
   const [dogs, setDogs] = useState<Dog[]>([]);
@@ -56,32 +39,40 @@ export default function DogsPage() {
     <div className="p-8">
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold">Dogs</h1>
-        <Link href="/dogs/new" className="px-4 py-2 rounded bg-blue-600 text-white">
+        <Link
+          href="/dogs/new"
+          className="px-4 py-2 rounded bg-blue-600 text-white"
+        >
           등록
         </Link>
       </div>
       <ul className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
         {dogs.map((dog) => (
-          <li key={dog.id} className="border border-gray-300 rounded-lg overflow-hidden">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={imageSrc(dog.image)}
-              alt={dog.kind}
-              className="w-full h-48 object-cover bg-gray-100"
-              onError={(e) => {
-                e.currentTarget.style.visibility = "hidden";
-              }}
-            />
-            <div className="p-4 space-y-1">
-              <h2 className="text-lg font-semibold">{dog.kind}</h2>
-              <p className="text-sm text-gray-500">{dog.country}</p>
-              <p>{dog.content}</p>
-              <p className="text-sm">
-                키 {dog.height}cm · 몸무게 {dog.weight}kg
-              </p>
-              <p className="font-bold">{dog.price.toLocaleString()}원</p>
-              <p className="text-xs text-gray-400">조회수 {dog.readcount}</p>
-            </div>
+          <li key={dog.id}>
+            <Link
+              href={`/dogs/${dog.id}/edit`}
+              className="block border border-gray-300 rounded-lg overflow-hidden hover:shadow-lg transition-shadow"
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={imageSrc(dog.image)}
+                alt={dog.kind}
+                className="w-full h-48 object-cover bg-gray-100"
+                onError={(e) => {
+                  e.currentTarget.style.visibility = "hidden";
+                }}
+              />
+              <div className="p-4 space-y-1">
+                <h2 className="text-lg font-semibold">{dog.kind}</h2>
+                <p className="text-sm text-gray-500">{dog.country}</p>
+                <p>{dog.content}</p>
+                <p className="text-sm">
+                  키 {dog.height}cm · 몸무게 {dog.weight}kg
+                </p>
+                <p className="font-bold">{dog.price.toLocaleString()}원</p>
+                <p className="text-xs text-gray-400">조회수 {dog.readcount}</p>
+              </div>
+            </Link>
           </li>
         ))}
       </ul>
