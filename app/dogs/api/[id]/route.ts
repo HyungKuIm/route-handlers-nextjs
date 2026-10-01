@@ -1,5 +1,6 @@
 import { type NextRequest } from "next/server";
 import { API_BASE, toDogRequest, uploadImage } from "../spring";
+import { requireAdmin } from "../../../members/api/spring";
 
 // 상세 조회 (Spring에서 조회수가 1 증가함)
 export async function GET(
@@ -26,6 +27,9 @@ export async function PUT(
     request: NextRequest,
     { params }: { params: Promise<{ id: string }> }
 ) {
+    const denied = await requireAdmin(request);
+    if (denied) return denied;
+
     const { id } = await params;
 
     try {
@@ -68,6 +72,9 @@ export async function DELETE(
     request: NextRequest,
     { params }: { params: Promise<{ id: string }> }
 ) {
+    const denied = await requireAdmin(request);
+    if (denied) return denied;
+
     const { id } = await params;
 
     try {

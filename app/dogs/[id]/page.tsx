@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { type Dog, imageSrc } from "../types";
+import { useMember } from "../../members/MemberProvider";
 
 export default function DogDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -13,6 +14,7 @@ export default function DogDetailPage() {
   const [error, setError] = useState<string | null>(null);
   const [quantity, setQuantity] = useState(1);
   const [adding, setAdding] = useState(false);
+  const { isAdmin } = useMember();
 
   useEffect(() => {
     async function fetchDog() {
@@ -111,9 +113,11 @@ export default function DogDetailPage() {
           </div>
 
           <div className="flex gap-2 pt-4">
-            <Link href={`/dogs/${dog.id}/edit`} className="px-4 py-2 rounded border border-gray-300">
-              수정
-            </Link>
+            {isAdmin && (
+              <Link href={`/dogs/${dog.id}/edit`} className="px-4 py-2 rounded border border-gray-300">
+                수정
+              </Link>
+            )}
             <Link href="/dogs" className="px-4 py-2 rounded border border-gray-300">
               목록
             </Link>

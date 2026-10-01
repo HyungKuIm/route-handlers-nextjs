@@ -3,11 +3,13 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { type Dog, imageSrc } from "./types";
+import { useMember } from "../members/MemberProvider";
 
 export default function DogsPage() {
   const [dogs, setDogs] = useState<Dog[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { isAdmin } = useMember();
 
   useEffect(() => {
     async function fetchDogs() {
@@ -63,12 +65,14 @@ export default function DogsPage() {
           >
             장바구니
           </Link>
-          <Link
-            href="/dogs/new"
-            className="px-4 py-2 rounded bg-blue-600 text-white"
-          >
-            등록
-          </Link>
+          {isAdmin && (
+            <Link
+              href="/dogs/new"
+              className="px-4 py-2 rounded bg-blue-600 text-white"
+            >
+              등록
+            </Link>
+          )}
         </div>
       </div>
       {dogs.length === 0 && <p>등록된 dog가 없습니다.</p>}
@@ -105,15 +109,17 @@ export default function DogsPage() {
                 <p className="text-xs text-gray-400">조회수 {dog.readcount}</p>
               </div>
             </Link>
-            <div className="px-4 pb-4 text-right">
-              <button
-                type="button"
-                onClick={() => handleDelete(dog)}
-                className="px-3 py-1 rounded border border-red-500 text-red-500 hover:bg-red-50"
-              >
-                삭제
-              </button>
-            </div>
+            {isAdmin && (
+              <div className="px-4 pb-4 text-right">
+                <button
+                  type="button"
+                  onClick={() => handleDelete(dog)}
+                  className="px-3 py-1 rounded border border-red-500 text-red-500 hover:bg-red-50"
+                >
+                  삭제
+                </button>
+              </div>
+            )}
           </li>
         ))}
       </ul>

@@ -4,8 +4,17 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import DogForm from "../../DogForm";
 import { type Dog } from "../../types";
+import AdminOnly from "../../../members/AdminOnly";
 
 export default function EditDogPage() {
+  return (
+    <AdminOnly>
+      <EditDog />
+    </AdminOnly>
+  );
+}
+
+function EditDog() {
   const { id } = useParams<{ id: string }>();
   const [dog, setDog] = useState<Dog | null>(null);
   const [loading, setLoading] = useState(true);

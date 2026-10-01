@@ -1,5 +1,6 @@
 import { type NextRequest } from "next/server";
 import { API_BASE, toDogRequest, uploadImage } from "./spring";
+import { requireAdmin } from "../../members/api/spring";
 
 export async function GET(request: NextRequest) {
     
@@ -19,6 +20,8 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
+    const denied = await requireAdmin(request);
+    if (denied) return denied;
 
     try {
         // 브라우저에서는 multipart/form-data로 받고, Spring에는 2단계로 전달
