@@ -7,11 +7,12 @@ export type Dog = {
   weight: number;
   price: number;
   readcount: number;
-  image: string;
+  image: string | null;
 };
 
 // "h.jpg"처럼 경로 없이 파일명만 온 경우도 /images/ 아래로 맞춤
-export function imageSrc(image: string) {
+export function imageSrc(image: string | null) {
+  if (!image) return undefined;
   if (image.startsWith("http") || image.startsWith("/")) return image;
   return `/images/${image}`;
 }

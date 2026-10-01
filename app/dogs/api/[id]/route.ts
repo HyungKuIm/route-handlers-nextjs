@@ -1,6 +1,27 @@
 import { type NextRequest } from "next/server";
 import { API_BASE, toDogRequest, uploadImage } from "../spring";
 
+// 상세 조회 (Spring에서 조회수가 1 증가함)
+export async function GET(
+    request: NextRequest,
+    { params }: { params: Promise<{ id: string }> }
+) {
+    const { id } = await params;
+
+    try {
+        const res = await fetch(`${API_BASE}/dogs/${id}`);
+
+        if (!res.ok) {
+            const text = await res.text();
+            return Response.json({ message: text }, { status: res.status });
+        }
+
+        return Response.json(await res.json());
+    } catch {
+        return Response.json({ message: 'Spring 서버에 연결할 수 없습니다 '}, { status: 502 });
+    }
+}
+
 export async function PUT(
     request: NextRequest,
     { params }: { params: Promise<{ id: string }> }

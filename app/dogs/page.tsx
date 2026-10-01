@@ -56,12 +56,20 @@ export default function DogsPage() {
     <div className="p-8">
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold">Dogs</h1>
-        <Link
-          href="/dogs/new"
-          className="px-4 py-2 rounded bg-blue-600 text-white"
-        >
-          등록
-        </Link>
+        <div className="flex gap-2">
+          <Link
+            href="/cart"
+            className="px-4 py-2 rounded border border-gray-300"
+          >
+            장바구니
+          </Link>
+          <Link
+            href="/dogs/new"
+            className="px-4 py-2 rounded bg-blue-600 text-white"
+          >
+            등록
+          </Link>
+        </div>
       </div>
       {dogs.length === 0 && <p>등록된 dog가 없습니다.</p>}
       <ul className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
@@ -70,16 +78,22 @@ export default function DogsPage() {
             key={dog.id}
             className="border border-gray-300 rounded-lg overflow-hidden hover:shadow-lg transition-shadow"
           >
-            <Link href={`/dogs/${dog.id}/edit`} className="block">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={imageSrc(dog.image)}
-                alt={dog.kind}
-                className="w-full h-48 object-cover bg-gray-100"
-                onError={(e) => {
-                  e.currentTarget.style.visibility = "hidden";
-                }}
-              />
+            <Link href={`/dogs/${dog.id}`} className="block">
+              {dog.image ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={imageSrc(dog.image)}
+                  alt={dog.kind}
+                  className="w-full h-48 object-cover bg-gray-100"
+                  onError={(e) => {
+                    e.currentTarget.style.visibility = "hidden";
+                  }}
+                />
+              ) : (
+                <div className="w-full h-48 flex items-center justify-center bg-gray-100 text-gray-400">
+                  이미지 없음
+                </div>
+              )}
               <div className="p-4 space-y-1">
                 <h2 className="text-lg font-semibold">{dog.kind}</h2>
                 <p className="text-sm text-gray-500">{dog.country}</p>
